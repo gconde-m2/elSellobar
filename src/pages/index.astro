@@ -1,16 +1,24 @@
----
 import '../styles/global.css';
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 
 const cartaEntries = await getCollection('carta');
 // Opcional: ordenar por algún criterio si es necesario
 const tapas = cartaEntries.map(entry => entry.data);
 
-const galleryItems = [
-	{ label: "Interior", id: "gallery-interior" },
-	{ label: "Comida", id: "gallery-comida" },
-	{ label: "Bebidas", id: "gallery-bebidas" }
-];
+// Obtener configuración general (logo, galería, etc)
+const configEntry = await getEntry('config', 'general');
+const siteConfig = configEntry?.data || {
+	logo: "",
+	siteName: "EL SELLO",
+	heroImage: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop",
+	gallery: [
+		{ label: "Interior", image: "" },
+		{ label: "Comida", image: "" },
+		{ label: "Bebidas", image: "" }
+	]
+};
+
+const galleryItems = siteConfig.gallery;
 ---
 
 <!DOCTYPE html>
@@ -30,12 +38,15 @@ const galleryItems = [
 		<nav class="fixed top-0 w-full z-50 bg-stone-50/90 backdrop-blur-md border-b border-stone-200">
 			<div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
 				<div class="flex items-center gap-3">
-					<!-- Logo Placeholder -->
+					<!-- Logo -->
 					<div class="w-12 h-12 bg-stone-200 rounded-lg flex items-center justify-center overflow-hidden border border-stone-300">
-						<img src="" alt="Logo" class="w-full h-full object-cover hidden" id="logo-img" />
-						<span class="text-stone-400 text-xs font-bold">LOGO</span>
+						{siteConfig.logo ? (
+							<img src={siteConfig.logo} alt={siteConfig.siteName} class="w-full h-full object-cover" id="logo-img" />
+						) : (
+							<span class="text-stone-400 text-xs font-bold uppercase tracking-tighter">EL SELLO</span>
+						)}
 					</div>
-					<span class="font-serif text-2xl font-bold tracking-tight text-stone-900">EL SELLO</span>
+					<span class="font-serif text-2xl font-bold tracking-tight text-stone-900">{siteConfig.siteName}</span>
 				</div>
 				<div class="hidden md:flex gap-8 text-sm font-semibold uppercase tracking-wider text-stone-600">
 					<a href="#inicio" class="hover:text-amber-700 transition-colors">Inicio</a>
@@ -48,10 +59,10 @@ const galleryItems = [
 
 		<!-- Hero Section -->
 		<section id="inicio" class="relative min-h-[90vh] flex flex-col justify-center items-center px-6 pt-20 text-white overflow-hidden bg-stone-800">
-			<!-- Provisonal background style, ready for real image -->
+			<!-- Background with CMS image -->
 			<div 
 				class="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000" 
-				style="background-image: url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop'); opacity: 0.6;"
+				style={`background-image: url('${siteConfig.heroImage}'); opacity: 0.6;`}
 			></div>
 			<!-- Dark Overlay -->
 			<div class="absolute inset-0 bg-stone-900/60 z-10"></div>
@@ -59,7 +70,7 @@ const galleryItems = [
 			<div class="relative z-20 text-center max-w-4xl px-4">
 				<span class="inline-block text-amber-200 uppercase tracking-[0.4em] font-bold text-xs mb-6">Taberna Tradicional</span>
 				<h1 class="font-serif text-5xl md:text-8xl font-bold mb-8 tracking-tight leading-tight">
-					Bar El Sello <br/><span class="italic font-normal serif-alt text-amber-200">Tradición en El Escorial</span>
+					{siteConfig.siteName} <br/><span class="italic font-normal serif-alt text-amber-200">Tradición en El Escorial</span>
 				</h1>
 				<p class="text-lg md:text-2xl text-stone-200 mb-10 max-w-2xl mx-auto leading-relaxed font-light">
 					Un espacio rústico y acogedor dedicado a las raciones caseras, el hierro forjado y el buen vino.
@@ -85,11 +96,15 @@ const galleryItems = [
 				<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 					{galleryItems.map((item) => (
 						<div class="group relative aspect-square bg-stone-300 overflow-hidden rounded-sm border-4 border-white shadow-md">
-							<div class="absolute inset-0 bg-stone-800/20 group-hover:bg-transparent transition-all duration-500"></div>
-							<div class="w-full h-full flex items-center justify-center text-stone-100 font-serif italic text-2xl">
-								{item.label}
+							<div class="absolute inset-0 bg-stone-800/20 group-hover:bg-transparent transition-all duration-500 z-10"></div>
+							<div class="absolute inset-0 w-full h-full flex items-center justify-center text-stone-100 font-serif italic text-2xl z-20 pointer-events-none group-hover:opacity-0 transition-opacity">
+								{!item.image && <span>{item.label}</span>}
 							</div>
-							<img src="" alt={item.label} class="absolute inset-0 w-full h-full object-cover hidden" />
+							{item.image ? (
+								<img src={item.image} alt={item.label} class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+							) : (
+								<div class="w-full h-full bg-stone-200"></div>
+							)}
 						</div>
 					))}
 				</div>
@@ -136,26 +151,36 @@ const galleryItems = [
 					</div>
 
 					<!-- Ubicación -->
-					<div>
-						<span class="text-amber-700 uppercase tracking-widest text-xs font-bold mb-4 block">Ubicación Real</span>
-						<h2 class="font-serif text-4xl font-bold mb-6 text-stone-900">Visítanos en El Escorial</h2>
-						<p class="text-lg text-stone-500 mb-8 leading-relaxed font-light">
-							Calle de las Peregrinas 21,<br/>
-							28280 El Escorial, Madrid, España.
-						</p>
-						<div class="flex flex-col gap-6">
-							<div class="flex items-center gap-4">
-								<div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-amber-800 border border-amber-200">
-									📍
-								</div>
-								<span class="text-stone-700 font-medium italic">En el corazón histórico de la villa.</span>
-							</div>
+					<div class="space-y-8">
+						<div>
+							<span class="text-amber-700 uppercase tracking-widest text-xs font-bold mb-2 block">Ubicación Real</span>
+							<h2 class="font-serif text-4xl font-bold mb-4 text-stone-900">Visítanos en El Escorial</h2>
+							<p class="text-lg text-stone-500 mb-6 leading-relaxed font-light">
+								Calle de las Peregrinas 21,<br/>
+								28280 El Escorial, Madrid, España.
+							</p>
+						</div>
+
+						<!-- Google Maps Iframe -->
+						<div class="w-full aspect-video rounded-sm overflow-hidden border border-stone-200 shadow-inner grayscale-[0.5] hover:grayscale-0 transition-all duration-700">
+							<iframe 
+								src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3032.544747!2d-4.126435!3d40.584766!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd4177d61c6b6b7b%3A0x6b6b7b6b7b6b7b6b!2sCalle%20de%20las%20Peregrinas%2C%2021%2C%2028280%20El%20Escorial%2C%20Madrid!5e0!3m2!1ses!2ses!4v1710345678901!5m2!1ses!2ses" 
+								width="100%" 
+								height="100%" 
+								style="border:0;" 
+								allowfullscreen="" 
+								loading="lazy" 
+								referrerpolicy="no-referrer-when-downgrade"
+							></iframe>
+						</div>
+
+						<div class="flex flex-col gap-4">
 							<a 
 								href="https://www.google.com/maps/search/?api=1&query=Bar+El+Sello+Calle+de+las+Peregrinas+21+El+Escorial" 
 								target="_blank" 
 								class="inline-block px-8 py-4 bg-stone-800 hover:bg-stone-900 text-white font-bold rounded-sm transition-all text-center uppercase tracking-widest text-xs"
 							>
-								Ver en Google Maps →
+								Abrir en Google Maps →
 							</a>
 						</div>
 					</div>
@@ -197,16 +222,82 @@ const galleryItems = [
 			</div>
 		</section>
 
+		<!-- Testimonios / Opiniones Section -->
+		<section id="opiniones" class="py-24 px-6 bg-stone-900 text-white overflow-hidden relative">
+			<!-- Subtle rustic texture background could go here -->
+			<div class="max-w-6xl mx-auto relative z-10">
+				<div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+					<div class="max-w-2xl">
+						<span class="text-amber-400 uppercase tracking-[0.3em] text-xs font-bold mb-4 block">Experiencias</span>
+						<h2 class="font-serif text-4xl md:text-5xl font-bold leading-tight">Lo que dicen nuestros <span class="italic text-amber-200">comensales</span></h2>
+					</div>
+					<a href="https://www.google.com/maps/search/?api=1&query=Bar+El+Sello+Calle+de+las+Peregrinas+21+El+Escorial" target="_blank" class="text-amber-200 hover:text-white transition-colors flex items-center gap-2 border-b border-amber-200/30 pb-1 text-sm font-semibold uppercase tracking-wider">
+						Ver todas en Google 
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+						</svg>
+					</a>
+				</div>
+
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+					<!-- Opinión 1 -->
+					<div class="bg-white/5 p-8 rounded-sm border border-white/10 backdrop-blur-sm">
+						<div class="flex gap-1 text-amber-400 mb-6">
+							{"★".repeat(5)}
+						</div>
+						<p class="text-stone-300 italic mb-8 leading-relaxed font-light">"Increíble tortilla de patatas, de las mejores del pueblo. El ambiente rústico te hace sentir como en casa. ¡Repetiremos seguro!"</p>
+						<div class="flex items-center gap-4">
+							<div class="w-10 h-10 rounded-full bg-stone-700 flex items-center justify-center font-bold text-stone-300">JP</div>
+							<cite class="not-italic font-bold text-stone-100 flex flex-col">
+								Juan Pérez
+								<span class="text-[10px] text-stone-500 font-normal uppercase tracking-widest mt-1">Local Guide</span>
+							</cite>
+						</div>
+					</div>
+
+					<!-- Opinión 2 -->
+					<div class="bg-white/5 p-8 rounded-sm border border-white/10 backdrop-blur-sm">
+						<div class="flex gap-1 text-amber-400 mb-6">
+							{"★".repeat(5)}
+						</div>
+						<p class="text-stone-300 italic mb-8 leading-relaxed font-light">"Un sitio con mucho encanto. Las raciones son abundantes y el servicio es de 10. Muy recomendable si visitas El Escorial."</p>
+						<div class="flex items-center gap-4">
+							<div class="w-10 h-10 rounded-full bg-stone-700 flex items-center justify-center font-bold text-stone-300">MG</div>
+							<cite class="not-italic font-bold text-stone-100 flex flex-col">
+								Marta García
+								<span class="text-[10px] text-stone-500 font-normal uppercase tracking-widest mt-1">Visitante</span>
+							</cite>
+						</div>
+					</div>
+
+					<!-- Opinión 3 -->
+					<div class="bg-white/5 p-8 rounded-sm border border-white/10 backdrop-blur-sm">
+						<div class="flex gap-1 text-amber-400 mb-6">
+							{"★".repeat(5)}
+						</div>
+						<p class="text-stone-300 italic mb-8 leading-relaxed font-light">"Vinos de calidad y picoteo excelente. El local es precioso, con mucha personalidad tradicional."</p>
+						<div class="flex items-center gap-4">
+							<div class="w-10 h-10 rounded-full bg-stone-700 flex items-center justify-center font-bold text-stone-300">RL</div>
+							<cite class="not-italic font-bold text-stone-100 flex flex-col">
+								Ricardo López
+								<span class="text-[10px] text-stone-500 font-normal uppercase tracking-widest mt-1">Comensal Habitual</span>
+							</cite>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
 		<!-- Footer -->
 		<footer class="py-16 bg-stone-900 text-stone-400 px-6">
 			<div class="max-w-6xl mx-auto flex flex-col items-center">
-				<span class="font-serif text-3xl font-bold tracking-tighter text-white mb-6 uppercase">EL SELLO</span>
+				<span class="font-serif text-3xl font-bold tracking-tighter text-white mb-6 uppercase">{siteConfig.siteName}</span>
 				<nav class="flex gap-8 mb-8 text-xs font-bold uppercase tracking-widest">
 					<a href="#inicio" class="hover:text-white transition-colors">Inicio</a>
 					<a href="#carta" class="hover:text-white transition-colors">Carta</a>
 					<a href="#horarios" class="hover:text-white transition-colors">Ubicación</a>
 				</nav>
-				<p class="text-stone-500 text-[10px] tracking-[0.2em] uppercase">© 2026 Bar El Sello | Calle de las Peregrinas 21, El Escorial</p>
+				<p class="text-stone-500 text-[10px] tracking-[0.2em] uppercase">© 2026 {siteConfig.siteName} | Calle de las Peregrinas 21, El Escorial</p>
 			</div>
 		</footer>
 

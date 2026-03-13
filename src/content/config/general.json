@@ -1,0 +1,10 @@
+{
+  "logo": "",
+  "siteName": "EL SELLO",
+  "heroImage": "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop",
+  "gallery": [
+    { "label": "Interior", "image": "" },
+    { "label": "Comida", "image": "" },
+    { "label": "Bebidas", "image": "" }
+  ]
+}

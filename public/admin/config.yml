@@ -1,11 +1,32 @@
 backend:
   name: git-gateway
-  branch: main # O master, según tu repo
+  branch: main
 
 media_folder: "public/uploads"
 public_folder: "/uploads"
 
 collections:
+  - name: "config"
+    label: "Ajustes del Sitio"
+    delete: false # Evitar borrar el archivo de configuración
+    editor:
+      preview: false
+    files:
+      - name: "general"
+        label: "Configuración General"
+        file: "src/content/config/general.json"
+        description: "Logo, Galería y otras imágenes globales"
+        fields:
+          - { label: "Logo del Bar", name: "logo", widget: "image", required: false }
+          - { label: "Nombre del Bar", name: "siteName", widget: "string" }
+          - { label: "Imagen Hero de fondo", name: "heroImage", widget: "image" }
+          - label: "Galería de Imágenes"
+            name: "gallery"
+            widget: "list"
+            fields:
+              - { label: "Título", name: "label", widget: "string" }
+              - { label: "Imagen", name: "image", widget: "image" }
+
   - name: "carta"
     label: "Carta"
     folder: "src/content/carta"
