@@ -1,0 +1,23 @@
+backend:
+  name: git-gateway
+  branch: main # O master, según tu repo
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+collections:
+  - name: "carta"
+    label: "Carta"
+    folder: "src/content/carta"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Nombre del plato/bebida", name: "title", widget: "string" }
+      - { label: "Ingredientes / Descripción", name: "description", widget: "text", required: false }
+      - { label: "Precio", name: "price", widget: "number", value_type: "float" }
+      - { 
+          label: "Categoría", 
+          name: "category", 
+          widget: "select", 
+          options: ['Para Picar', 'Raciones', 'Bebidas', 'Postres'] 
+        }
