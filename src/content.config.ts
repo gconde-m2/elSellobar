@@ -11,7 +11,7 @@ const carta = defineCollection({
   }),
 });
 
-const config = defineCollection({
+const settings = defineCollection({
   loader: file("src/content/config/general.json"),
   schema: z.object({
     logo: z.string().optional(),
@@ -24,4 +24,4 @@ const config = defineCollection({
   })
 });
 
-export const collections = { carta, config };
+export const collections = { carta, settings };

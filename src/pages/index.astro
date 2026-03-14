@@ -6,7 +6,7 @@ const cartaEntries = await getCollection('carta');
 const tapas = cartaEntries.map(entry => entry.data);
 
 // Obtener configuración general (logo, galería, etc)
-const configEntry = await getEntry('config', 'general');
+const configEntry = await getEntry('settings', 'general');
 const siteConfig = configEntry?.data || {
 	logo: "",
 	siteName: "EL SELLO",
