@@ -12,9 +12,15 @@ const carta = defineCollection({
 });
 
 const settings = defineCollection({
-  loader: file("src/content/config/general.json"),
+  loader: glob({ pattern: "general.json", base: "./src/content/config" }),
   schema: z.object({
-    logo: z.string().optional(),
+    logo: z.union([
+      z.string(),
+      z.object({
+        src: z.string(),
+        alt: z.string().optional(),
+      })
+    ]).optional(),
     siteName: z.string(),
     heroImage: z.string(),
     gallery: z.array(z.object({

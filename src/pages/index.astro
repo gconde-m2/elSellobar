@@ -1,3 +1,4 @@
+---
 import '../styles/global.css';
 import { getCollection, getEntry } from 'astro:content';
 
@@ -19,6 +20,7 @@ const siteConfig = configEntry?.data || {
 };
 
 const galleryItems = siteConfig.gallery;
+const logoSrc = typeof siteConfig.logo === 'string' ? siteConfig.logo : siteConfig.logo?.src;
 ---
 
 <!DOCTYPE html>
@@ -40,8 +42,8 @@ const galleryItems = siteConfig.gallery;
 				<div class="flex items-center gap-3">
 					<!-- Logo -->
 					<div class="w-12 h-12 bg-stone-200 rounded-lg flex items-center justify-center overflow-hidden border border-stone-300">
-						{siteConfig.logo ? (
-							<img src={siteConfig.logo} alt={siteConfig.siteName} class="w-full h-full object-cover" id="logo-img" />
+						{logoSrc ? (
+							<img src={logoSrc} alt={siteConfig.siteName} class="w-full h-full object-cover" id="logo-img" />
 						) : (
 							<span class="text-stone-400 text-xs font-bold uppercase tracking-tighter">EL SELLO</span>
 						)}
