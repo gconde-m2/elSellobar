@@ -2,5 +2,14 @@
   "logo": "/uploads/captura-de-pantalla-2026-03-27-a-las-12.40.15.png",
   "siteName": "EL Sello",
   "heroImage": "/uploads/captura-de-pantalla-2026-03-27-a-las-12.39.49.png",
-  "gallery": []
+  "gallery": [
+    {
+      "image": "/uploads/captura-de-pantalla-2026-03-27-a-las-12.41.12.png",
+      "label": "Paella"
+    },
+    {
+      "image": "/uploads/captura-de-pantalla-2026-03-27-a-las-12.42.38.png",
+      "label": "El Sitio"
+    }
+  ]
 }
