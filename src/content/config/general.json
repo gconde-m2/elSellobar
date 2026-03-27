@@ -1,10 +1,19 @@
 {
-  "logo": "",
-  "siteName": "EL SELLO",
-  "heroImage": "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop",
+  "logo": "/uploads/captura-de-pantalla-2026-03-27-a-las-12.40.15.png",
+  "siteName": "EL Sello",
+  "heroImage": "/uploads/captura-de-pantalla-2026-03-27-a-las-12.39.49.png",
   "gallery": [
-    { "label": "Interior", "image": "" },
-    { "label": "Comida", "image": "" },
-    { "label": "Bebidas", "image": "" }
+    {
+      "image": "/uploads/captura-de-pantalla-2026-03-27-a-las-12.41.12.png",
+      "label": "Paella"
+    },
+    {
+      "image": "/uploads/captura-de-pantalla-2026-03-27-a-las-12.42.38.png",
+      "label": "El Sitio"
+    },
+    {
+      "image": "/uploads/captura-de-pantalla-2026-03-27-a-las-12.47.47.png",
+      "label": "Entrada"
+    }
   ]
 }
